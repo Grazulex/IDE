@@ -75,6 +75,7 @@ def save_as():
     with open(path, "w") as file:
         code = current_editor.get("1.0", tk.END)
         file.write(code)
+        show_git_status()
         set_file_path(current_tab, path)
 
 def apply_syntax_highlighting(editor, line_numbers):
@@ -259,13 +260,14 @@ commit_message.pack()
 
 tk.Button(git_frame, text="Git Status", command=show_git_status).pack(side=tk.LEFT, padx=2)
 tk.Button(git_frame, text="Commit", command=commit_changes).pack(side=tk.LEFT, padx=2)
-tk.Button(git_frame, text="Pull", command=pull_changes).pack(side=tk.LEFT, padx=2)
 tk.Button(git_frame, text="Push", command=push_changes).pack(side=tk.LEFT, padx=2)
+tk.Button(git_frame, text="Pull", command=pull_changes).pack(side=tk.LEFT, padx=2)
 
-git_output = tk.Text(frame_bottom, height=5, bg="#1e1e1e", fg="white")
+git_output = tk.Text(frame_bottom, height=5, bg="#d3d3d3", fg="black")
 git_output.pack(fill=tk.BOTH, expand=True, padx=5, pady=5, side=tk.LEFT)
 
 code_output = tk.Text(windows, height=5, bg="#1e1e1e", fg="white")
 code_output.pack(fill=tk.BOTH, padx=5, pady=5)
 
 windows.mainloop()
+
