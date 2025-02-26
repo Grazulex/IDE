@@ -32,7 +32,7 @@ def commit_changes():
         output = run_git_command(f'git commit -m "{message}"')
         git_output.delete("1.0", tk.END)
         git_output.insert("1.0", output)
-        commit_message.delete("1.0", tk.END)
+        commit_message.delete(0, tk.END)
     else:
         git_output.delete("1.0", tk.END)
         git_output.insert("1.0", "Commit message cannot be empty!")
