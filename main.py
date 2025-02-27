@@ -22,30 +22,40 @@ def run_git_command(command):
 
 def show_git_status():
     output = run_git_command("git status")
+    git_output.config(state="normal")
     git_output.delete("1.0", tk.END)
     git_output.insert("1.0", output)
+    git_output.config(state="disabled")
 
 def commit_changes():
     message = commit_message.get()
     if message.strip():
         run_git_command("git add .")
         output = run_git_command(f'git commit -m "{message}"')
+        git_output.config(state="normal")
         git_output.delete("1.0", tk.END)
         git_output.insert("1.0", output)
+        git_output.config(state="disabled")
         commit_message.delete(0, tk.END)
     else:
+        git_output.config(state="normal")
         git_output.delete("1.0", tk.END)
         git_output.insert("1.0", "Commit message cannot be empty!")
+        git_output.config(state="disabled")
 
 def push_changes():
     output = run_git_command("git push")
+    git_output.config(state="normal")
     git_output.delete("1.0", tk.END)
     git_output.insert("1.0", output)
+    git_output.config(state="disabled")
 
 def pull_changes():
     output = run_git_command("git pull")
+    git_output.config(state="normal")
     git_output.delete("1.0", tk.END)
     git_output.insert("1.0", output)
+    git_output.config(state="disabled")
 
 def set_file_path(index, path):
     file_paths[index] = path
@@ -56,13 +66,14 @@ def open_file():
         return
     current_tab = tabControl.index("current")
     current_editor = editorlist[current_tab]
+    current_numbers = numberlist[current_tab]
     with open(path, "r") as file:
         code = file.read()
         current_editor.delete("1.0", tk.END)
         current_editor.insert("1.0", code)
         set_file_path(current_tab, path)
         tabControl.tab(current_tab, text=os.path.basename(path))
-    apply_syntax_highlighting(current_editor)
+    apply_syntax_highlighting(current_editor, current_numbers)
 
 def save_as():
     current_tab = tabControl.index("current")
@@ -181,6 +192,7 @@ def create_tab():
     new_editor.bind("<KeyRelease>", lambda event: apply_syntax_highlighting(new_editor, line_numbers))
     new_editor.bind("<KeyPress>", lambda event: handle_keypress(event, new_editor))
     editorlist.append(new_editor)
+    numberlist.append(line_numbers)
     file_paths[index_tabs] = ""  # Ajoute un chemin vide pour ce nouvel onglet
 
 def close_current_tab():
@@ -226,6 +238,7 @@ windows.bind("<F5>", lambda event: run_code())
 tabControl = ttk.Notebook(windows)
 tabControl.pack(expand=1, fill="both")
 editorlist = []
+numberlist = []
 
 def create_first_tab():
     tab = ttk.Frame(tabControl)
@@ -244,6 +257,7 @@ def create_first_tab():
     editor.bind("<KeyPress>", lambda event: handle_keypress(event, editor))
 
     editorlist.append(editor)
+    numberlist.append(line_numbers)
     file_paths[0] = ""
 
 create_first_tab()
@@ -263,7 +277,7 @@ tk.Button(git_frame, text="Commit", command=commit_changes).pack(side=tk.LEFT, p
 tk.Button(git_frame, text="Push", command=push_changes).pack(side=tk.LEFT, padx=2)
 tk.Button(git_frame, text="Pull", command=pull_changes).pack(side=tk.LEFT, padx=2)
 
-git_output = tk.Text(frame_bottom, height=5, bg="#d3d3d3", fg="black")
+git_output = tk.Text(frame_bottom, height=5, bg="#d3d3d3", fg="black", state="disabled")
 git_output.pack(fill=tk.BOTH, expand=True, padx=5, pady=5, side=tk.LEFT)
 
 code_output = tk.Text(windows, height=5, bg="#1e1e1e", fg="white")
